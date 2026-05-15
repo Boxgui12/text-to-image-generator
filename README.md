@@ -2,6 +2,8 @@
 
 Simple Streamlit app that turns text prompts into AI-generated images with Stability AI.
 
+![Text Image Generator app screenshot](assets/readme-screenshot.png)
+
 ## Features
 
 - Spanish by default with an English/Spanish switch
