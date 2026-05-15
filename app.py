@@ -213,6 +213,31 @@ def main() -> None:
             st.session_state.prompt = get_default_prompt(lang)
         st.session_state.active_language = lang
 
+    sidebar = st.sidebar
+    sidebar.title("Settings" if lang == "en" else "Configuración")
+    sidebar.caption(
+        "Your API key stays in this browser session only."
+        if lang == "en"
+        else "Tu API key se mantiene solo en esta sesión del navegador."
+    )
+    sidebar_api_key = sidebar.text_input(
+        "STABILITY_API_KEY",
+        type="password",
+        placeholder="sk-..." if lang == "en" else "sk-...",
+        help="Set your Stability AI key here." if lang == "en" else "Ingresa aquí tu clave de Stability AI.",
+        key="sidebar_stability_api_key",
+    )
+    api_key = sidebar_api_key.strip()
+
+    if sidebar_api_key.strip():
+        sidebar.success("API key loaded" if lang == "en" else "API key cargada")
+    else:
+        sidebar.warning(
+            "Add your `STABILITY_API_KEY` to continue."
+            if lang == "en"
+            else "Agrega tu `STABILITY_API_KEY` para continuar."
+        )
+
     header_left, header_right = st.columns([6, 1], vertical_alignment="center")
     with header_left:
         st.title(f"{APP_ICON} {text['title']}")
@@ -220,11 +245,6 @@ def main() -> None:
         st.toggle(text["switch"], key="language_is_english")
 
     st.divider()
-
-    api_key = os.getenv("STABILITY_API_KEY", "").strip()
-    if not api_key:
-        st.error(text["missing_key"])
-        st.info(text["env_hint"])
 
     st.write(text["prompt_label"])
     prompt = st.text_area(
@@ -242,6 +262,8 @@ def main() -> None:
 
     if generate_clicked:
         if not api_key:
+            st.error(text["missing_key"])
+            st.info(text["env_hint"])
             st.stop()
 
         if not prompt.strip():
