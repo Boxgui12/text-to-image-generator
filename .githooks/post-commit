@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+
+branch="$(git branch --show-current)"
+
+if [ -z "${branch}" ]; then
+  echo "post-commit: could not determine current branch; skipping automatic push."
+  exit 0
+fi
+
+if ! git remote get-url origin >/dev/null 2>&1; then
+  echo "post-commit: no origin remote configured; skipping automatic push."
+  exit 0
+fi
+
+if ! git push -u origin "$branch"; then
+  echo "post-commit: automatic push failed. Check GitHub auth and remote access."
+fi
+
